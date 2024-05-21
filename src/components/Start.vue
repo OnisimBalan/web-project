@@ -130,16 +130,16 @@
                   placeholder="Product Name"
                 />
               </div>
-              <div class="d-flex justify-content-between">
+              <div class="d-flex">
                 <button @click="getOrder" class="btn btn-primary">
                   Get Order
                 </button>
-                <button @click="getProduct" class="btn btn-primary">
+                <button @click="getProduct" class="btn btn-primary mt-2">
                   Get Product
                 </button>
                 <button
                   @click="getAllProductsAndOrders"
-                  class="btn btn-primary"
+                  class="btn btn-primary mt-2"
                 >
                   Get All
                 </button>
