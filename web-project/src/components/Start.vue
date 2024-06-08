@@ -19,21 +19,30 @@
                 />
               </div>
               <div class="form-group">
-                <label>Detail 1</label>
+                <label>Price</label>
                 <input
                   type="text"
                   class="form-control"
-                  v-model="productDetail1"
-                  placeholder="Detail 1"
+                  v-model="Price"
+                  placeholder="Price"
                 />
               </div>
               <div class="form-group">
-                <label>Detail 2</label>
+                <label>Desription</label>
                 <input
                   type="text"
                   class="form-control"
-                  v-model="productDetail2"
-                  placeholder="Detail 2"
+                  v-model="Desription"
+                  placeholder="Desription"
+                />
+              </div>
+              <div class="form-group">
+                <label>Quantity</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="Quantity"
+                  placeholder="Quantity"
                 />
               </div>
               <button @click="postProduct" class="btn btn-primary">Post</button>
@@ -156,7 +165,7 @@
 import axios from "axios";
 import { Vue } from "vue-class-component";
 
-const BASE_URL = "/";
+const BASE_URL = "https://127.0.0.1:8000";
 
 interface Category {
   id: number;
@@ -176,7 +185,7 @@ interface Product {
   price: number;
   description: string;
   availableQuantity: string;
-  categoryId: number;
+  // categoryId: number;
 }
 
 interface User {
@@ -190,8 +199,9 @@ interface User {
 export default class Start extends Vue {
   product = "";
   productName = "";
-  productDetail1 = "";
-  productDetail2 = "";
+  Price = 0;
+  Desription = "";
+  Quantity = "";
   order = "";
   productForOrder = "";
   deleteProductName = "";
@@ -211,10 +221,10 @@ export default class Start extends Vue {
     const product: Product = {
       id: 0, // Placeholder value or whatever default value makes sense
       name: this.productName,
-      description: this.productDetail1 + " " + this.productDetail2,
-      price: 0, // Set appropriate value
-      availableQuantity: "0", // Set appropriate value
-      categoryId: 0, // Set appropriate value
+      description: this.Desription,
+      price: this.Price,
+      availableQuantity: this.Quantity, 
+      // categoryId: 0,
     };
 
     try {
