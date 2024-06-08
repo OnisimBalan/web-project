@@ -223,8 +223,7 @@ export default class Start extends Vue {
       name: this.productName,
       description: this.Desription,
       price: this.Price,
-      availableQuantity: this.Quantity, 
-      // categoryId: 0,
+      availableQuantity: this.Quantity,
     };
 
     try {
