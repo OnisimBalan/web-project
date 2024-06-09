@@ -170,7 +170,7 @@
                   type="text"
                   class="form-control"
                   v-model="order"
-                  placeholder="Order Name"
+                  placeholder="Order name"
                 />
               </div>
               <button @click="getOrder" class="btn btn-primary">
@@ -186,15 +186,36 @@
       <div class="row">
         <div class="col-md-6">
           <div class="card mb-3">
-            <div class="card-header">All results</div>
+            <div class="card-header">Add user</div>
             <div class="card-body">
-              <!-- Product Deletion Form -->
               <div class="form-group">
                 <input
                   type="text"
                   class="form-control"
-                  v-model="deleteProductName"
+                  v-model="Email"
+                  placeholder="Email"
                 />
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="UserName"
+                  placeholder="User name"
+                />
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="Password"
+                  placeholder="Password"
+                />
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="Role"
+                  placeholder="Role"
+                />
+                <button @click="postUser" class="btn btn-primary">
+                  Add user
+                </button>
               </div>
             </div>
           </div>
@@ -205,13 +226,12 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
-import { Vue } from 'vue-class-component';
+import axios from "axios";
+import { Vue } from "vue-class-component";
 
-const BASE_URL = 'https://127.0.0.1:8000';
+const BASE_URL = "https://127.0.0.1:8000";
 
 interface Category {
-  id: number;
   desription: string;
 }
 
@@ -231,7 +251,6 @@ interface Product {
 }
 
 interface User {
-  id: number;
   username: string;
   email: string;
   role: string;
@@ -239,120 +258,164 @@ interface User {
 }
 
 export default class Start extends Vue {
-  product = '';
-  productName = '';
+  product = "";
+  productName = "";
   Price = 0;
-  Desription = '';
-  Quantity = '';
+  Desription = "";
+  Quantity = "";
   categoryId = 0;
-  order = '';
-  productForOrder = '';
-  deleteProductName = '';
-  deleteUserName = '';
-  user = '';
+  order = "";
+  productForOrder = "";
+  deleteProductName = "";
+  deleteUserName = "";
+  user = "";
+  Email = "";
+  UserName = "";
+  Password = "";
+  Role = "";
 
   async deleteProduct() {
     try {
-      await axios.delete(
-        `${BASE_URL}/products/delete/${this.deleteProductName}`,
-      );
-      alert('Product ' + this.deleteProductName + ' was deleted!');
+      await axios.delete(`${BASE_URL}/products/${this.deleteProductName}`);
+      alert("Product " + this.deleteProductName + " was deleted!");
 
-      console.log('Product deleted');
+      console.log("Product deleted");
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error("Error deleting product:", error);
     }
   }
 
   async deleteUser() {
     try {
-      await axios.delete(`${BASE_URL}/users/delete/${this.deleteUserName}`);
-      alert('User ' + this.deleteUserName + ' was deleted!');
-      console.log('User deleted');
+      await axios.delete(`${BASE_URL}/users/${this.deleteUserName}`);
+      alert("User " + this.deleteUserName + " was deleted!");
+      console.log("User deleted");
     } catch (error) {
-      console.error('Error deleting User:', error);
+      console.error("Error deleting User:", error);
+    }
+  }
+
+  async postUser() {
+    var bodyFormData = new FormData();
+    const user: User = {
+      email: this.Email,
+      username: this.UserName,
+      password: this.Password,
+      role: this.Role,
+    };
+
+    bodyFormData.append("email", user.email);
+    bodyFormData.append("username", user.username);
+    bodyFormData.append("password", user.password);
+    bodyFormData.append("role", user.role);
+    alert("User:" + user.email + user.username + user.password + user.role);
+
+    try {
+      const response = await axios.post(`${BASE_URL}/users`, bodyFormData);
+      alert("User:" + user.email + user.username + user.password + user.role);
+      alert("User: " + response.data);
+      console.log("User posted:", response.data);
+    } catch (error) {
+      console.error("Error posting User:", error);
     }
   }
 
   async postProduct() {
+    var bodyFormData = new FormData();
     const product: Product = {
       name: this.productName,
+      price: this.Price,
       desription: this.Desription,
-      price: 0,
-      available_quantity: '0',
-      category_id: 0,
+      available_quantity: this.Quantity,
+      category_id: this.categoryId,
     };
 
+    bodyFormData.append("name", product.name);
+    bodyFormData.append("available_quantity", product.available_quantity);
+    bodyFormData.append("category_id", product.category_id.toString());
+    bodyFormData.append("desription", product.desription);
+    bodyFormData.append("price", product.price.toString());
+
     try {
-      const response = await axios.post(`${BASE_URL}/products,${product}`);
-      console.log('Product posted:', response.data);
+      const response = await axios.post(`${BASE_URL}/products`, bodyFormData);
+
+      alert(
+        "Product:" +
+          product.name +
+          product.available_quantity +
+          product.category_id +
+          product.desription +
+          product.price
+      );
+      alert("Product: " + response.data);
+      console.log("Product posted:", response.data);
     } catch (error) {
-      console.error('Error posting product:', error);
+      console.error("Error posting product:", error);
     }
   }
 
   async getProduct() {
     try {
       const response = await axios.get(`${BASE_URL}/products/${this.product}`);
-      alert('Product: ' + this.product);
+      alert("Product: " + this.product);
 
-      console.log('Product:', response.data);
+      console.log("Product:", response.data);
     } catch (error) {
-      console.error('Error getting product:', error);
+      console.error("Error getting product:", error);
     }
   }
 
   async getCategories() {
     try {
       const response = await axios.get<Category[]>(`${BASE_URL}/categories`);
-      alert('Product: ' + response.data);
+      alert("Product: " + response.data);
 
-      console.log('Categories:', response.data);
+      console.log("Categories:", response.data);
     } catch (error) {
-      console.error('Error getting categories:', error);
+      console.error("Error getting categories:", error);
     }
   }
 
   async getUsers() {
     try {
       const response = await axios.get<User[]>(`${BASE_URL}/users`);
-      alert('Users: ' + response.data);
+      alert("Users: " + response.data);
 
-      console.log('Users:', response.data);
+      console.log("Users:", response.data);
     } catch (error) {
-      console.error('Error getting users:', error);
+      console.error("Error getting users:", error);
     }
   }
 
   async getUser() {
     try {
       const response = await axios.get<User>(`${BASE_URL}/users/${this.user}`);
-      alert('User: ' + response.data);
-      console.log('User:', response.data);
+      alert("User: " + response.data);
+      console.log("User:", response.data);
     } catch (error) {
-      console.error('Error getting user:', error);
+      console.error("Error getting user:", error);
     }
   }
 
   async getOrder() {
     try {
       const response = await axios.get<Order>(
-        `${BASE_URL}/orders/${this.order}`,
+        `${BASE_URL}/orders/${this.order}`
       );
-      alert('Order: ' + response.data);
-      console.log('Order:', response.data);
+      alert("Order: " + response.data);
+      console.log("Order:", response.data);
     } catch (error) {
-      console.error('Error getting order:', error);
+      console.error("Error getting order:", error);
     }
   }
 
   async getAllProductsAndOrders() {
     try {
       const response = await axios.get(`${BASE_URL}/products-and-orders`);
-      alert('Orders: ' + response.data);
-      console.log('All Products and Orders:', response.data);
+      alert("Orders: " + response.data);
+      console.log("All Products and Orders:", response.data);
     } catch (error) {
-      console.error('Error getting all products and orders:', error);
+      console.error("Error getting all products and orders:", error);
     }
   }
 }
