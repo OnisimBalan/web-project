@@ -45,7 +45,18 @@
                   placeholder="Quantity"
                 />
               </div>
-              <button @click="postProduct" class="btn btn-primary">Post</button>
+              <div class="form-group">
+                <label>Category ID</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="categoryId"
+                  placeholder="categoryId"
+                />
+              </div>
+              <button @click="postProduct" class="btn btn-primary">
+                Post product
+              </button>
             </div>
           </div>
         </div>
@@ -67,7 +78,25 @@
                 />
               </div>
               <button @click="deleteProduct" class="btn btn-danger">
-                Delete
+                Delete product
+              </button>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header">Delete user</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>User Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="deleteUserName"
+                  placeholder="User Name"
+                />
+              </div>
+              <button @click="deleteUser" class="btn btn-danger">
+                Delete user
               </button>
             </div>
           </div>
@@ -89,7 +118,9 @@
                   placeholder="Product Name"
                 />
               </div>
-              <button @click="getProduct" class="btn btn-primary">Get</button>
+              <button @click="getProduct" class="btn btn-primary">
+                Get product
+              </button>
             </div>
           </div>
         </div>
@@ -116,6 +147,15 @@
               <button @click="getUsers" class="btn btn-primary">
                 Get Users
               </button>
+              <div class="form-group mt-3">
+                <label>User Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="user"
+                  placeholder="User Name"
+                />
+              </div>
               <button @click="getUser" class="btn btn-primary">Get User</button>
             </div>
           </div>
@@ -123,7 +163,7 @@
 
         <div class="col-md-6">
           <div class="card mb-3">
-            <div class="card-header">Get Orders and Products</div>
+            <div class="card-header">Get Orders</div>
             <div class="card-body">
               <div class="form-group">
                 <input
@@ -132,26 +172,29 @@
                   v-model="order"
                   placeholder="Order Name"
                 />
+              </div>
+              <button @click="getOrder" class="btn btn-primary">
+                Get Order
+              </button>
+              <button @click="getAllProductsAndOrders" class="btn btn-primary">
+                Get all orders
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-header">All results</div>
+            <div class="card-body">
+              <!-- Product Deletion Form -->
+              <div class="form-group">
                 <input
                   type="text"
                   class="form-control"
-                  v-model="productForOrder"
-                  placeholder="Product Name"
+                  v-model="deleteProductName"
                 />
-              </div>
-              <div class="d-flex justify-content-between">
-                <button @click="getOrder" class="btn btn-primary">
-                  Get Order
-                </button>
-                <button @click="getProduct" class="btn btn-primary">
-                  Get Product
-                </button>
-                <button
-                  @click="getAllProductsAndOrders"
-                  class="btn btn-primary"
-                >
-                  Get All
-                </button>
               </div>
             </div>
           </div>
@@ -162,14 +205,14 @@
 </template>
 
 <script lang="ts">
-import axios from "axios";
-import { Vue } from "vue-class-component";
+import axios from 'axios';
+import { Vue } from 'vue-class-component';
 
-const BASE_URL = "https://127.0.0.1:8000";
+const BASE_URL = 'https://127.0.0.1:8000';
 
 interface Category {
   id: number;
-  description: string;
+  desription: string;
 }
 
 interface Order {
@@ -180,12 +223,11 @@ interface Order {
 }
 
 interface Product {
-  id: number;
   name: string;
   price: number;
-  description: string;
-  availableQuantity: string;
-  // categoryId: number;
+  desription: string;
+  available_quantity: string;
+  category_id: number;
 }
 
 interface User {
@@ -197,96 +239,120 @@ interface User {
 }
 
 export default class Start extends Vue {
-  product = "";
-  productName = "";
+  product = '';
+  productName = '';
   Price = 0;
-  Desription = "";
-  Quantity = "";
-  order = "";
-  productForOrder = "";
-  deleteProductName = "";
+  Desription = '';
+  Quantity = '';
+  categoryId = 0;
+  order = '';
+  productForOrder = '';
+  deleteProductName = '';
+  deleteUserName = '';
+  user = '';
 
   async deleteProduct() {
     try {
       await axios.delete(
-        `${BASE_URL}/products/delete/${this.deleteProductName}`
+        `${BASE_URL}/products/delete/${this.deleteProductName}`,
       );
-      console.log("Product deleted");
+      alert('Product ' + this.deleteProductName + ' was deleted!');
+
+      console.log('Product deleted');
     } catch (error) {
-      console.error("Error deleting product:", error);
+      console.error('Error deleting product:', error);
+    }
+  }
+
+  async deleteUser() {
+    try {
+      await axios.delete(`${BASE_URL}/users/delete/${this.deleteUserName}`);
+      alert('User ' + this.deleteUserName + ' was deleted!');
+      console.log('User deleted');
+    } catch (error) {
+      console.error('Error deleting User:', error);
     }
   }
 
   async postProduct() {
     const product: Product = {
-      id: 0, // Placeholder value or whatever default value makes sense
       name: this.productName,
-      description: this.Desription,
-      price: this.Price,
-      availableQuantity: this.Quantity,
+      desription: this.Desription,
+      price: 0,
+      available_quantity: '0',
+      category_id: 0,
     };
 
     try {
-      const response = await axios.post(`${BASE_URL}/products`, product);
-      console.log("Product posted:", response.data);
+      const response = await axios.post(`${BASE_URL}/products,${product}`);
+      console.log('Product posted:', response.data);
     } catch (error) {
-      console.error("Error posting product:", error);
+      console.error('Error posting product:', error);
     }
   }
 
   async getProduct() {
     try {
       const response = await axios.get(`${BASE_URL}/products/${this.product}`);
-      console.log("Product:", response.data);
+      alert('Product: ' + this.product);
+
+      console.log('Product:', response.data);
     } catch (error) {
-      console.error("Error getting product:", error);
+      console.error('Error getting product:', error);
     }
   }
 
   async getCategories() {
     try {
       const response = await axios.get<Category[]>(`${BASE_URL}/categories`);
-      console.log("Categories:", response.data);
+      alert('Product: ' + response.data);
+
+      console.log('Categories:', response.data);
     } catch (error) {
-      console.error("Error getting categories:", error);
+      console.error('Error getting categories:', error);
     }
   }
 
   async getUsers() {
     try {
       const response = await axios.get<User[]>(`${BASE_URL}/users`);
-      console.log("Users:", response.data);
+      alert('Users: ' + response.data);
+
+      console.log('Users:', response.data);
     } catch (error) {
-      console.error("Error getting users:", error);
+      console.error('Error getting users:', error);
     }
   }
 
   async getUser() {
     try {
-      const userId = 1; // Replace with the actual user ID you want to retrieve
-      const response = await axios.get<User>(`${BASE_URL}/users/${userId}`);
-      console.log("User:", response.data);
+      const response = await axios.get<User>(`${BASE_URL}/users/${this.user}`);
+      alert('User: ' + response.data);
+      console.log('User:', response.data);
     } catch (error) {
-      console.error("Error getting user:", error);
+      console.error('Error getting user:', error);
     }
   }
 
   async getOrder() {
     try {
-      const orderId = 1; // Replace with the actual order ID you want to retrieve
-      const response = await axios.get<Order>(`${BASE_URL}/orders/${orderId}`);
-      console.log("Order:", response.data);
+      const response = await axios.get<Order>(
+        `${BASE_URL}/orders/${this.order}`,
+      );
+      alert('Order: ' + response.data);
+      console.log('Order:', response.data);
     } catch (error) {
-      console.error("Error getting order:", error);
+      console.error('Error getting order:', error);
     }
   }
 
   async getAllProductsAndOrders() {
     try {
       const response = await axios.get(`${BASE_URL}/products-and-orders`);
-      console.log("All Products and Orders:", response.data);
+      alert('Orders: ' + response.data);
+      console.log('All Products and Orders:', response.data);
     } catch (error) {
-      console.error("Error getting all products and orders:", error);
+      console.error('Error getting all products and orders:', error);
     }
   }
 }
